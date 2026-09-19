@@ -8,6 +8,13 @@ android {
     namespace = "com.nexus.ai"
     compileSdk = 35
 
+    // Keep Java and Kotlin bytecode targets aligned.
+    // GitHub Actions uses JDK 17 and Kotlin 2.0.21 targets JVM 17 by default.
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     defaultConfig {
         applicationId = "com.nexus.ai"
         minSdk = 26
@@ -15,6 +22,10 @@ android {
         versionCode = 51
         versionName = "1.44"
     }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
