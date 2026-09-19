@@ -1,20 +1,26 @@
-# GITHUB_FIX_V1_44_1
+# GITHUB_FIX_V1_44_2
 
-Substituir no GitHub o arquivo:
+## Correção baseada no log real do GitHub Actions
 
-.github/workflows/main.yml
+O Gradle agora inicia corretamente e falha em `:app:checkDebugAarMetadata`.
 
-O projeto Android está dentro de:
+Erro confirmado:
+`Configuration :app:debugRuntimeClasspath contains AndroidX dependencies, but the android.useAndroidX property is not enabled.`
 
-NEXUS_V1_44_CORE_X/
+## Arquivo para substituir/adicionar
 
-Esta correção:
-- remove a chave YAML quebrada `if-no-files- / found`;
-- evita a instalação do pacote legado `tools` no setup-android;
-- usa Java 17 com setup-java v5;
-- executa os comandos Gradle dentro de `NEXUS_V1_44_CORE_X`;
-- instala Android SDK 35/build-tools 35.0.0;
-- mantém test + assembleDebug + upload do APK.
+Copiar:
 
-Depois do commit, aguardar o novo GitHub Actions.
-Não alterar Kotlin/Java ainda: o próximo erro real do build deve ser tratado somente depois desta execução.
+`NEXUS_V1_44_CORE_X/gradle.properties`
+
+para a pasta:
+
+`NEXUS_V1_44_CORE_X/`
+
+Conteúdo:
+- `android.useAndroidX=true`
+- `android.enableJetifier=true`
+
+Não alterar Kotlin/Java nem o workflow nesta etapa.
+
+Depois do commit, executar novamente o GitHub Actions. O próximo resultado deve revelar o próximo erro real, se houver.
