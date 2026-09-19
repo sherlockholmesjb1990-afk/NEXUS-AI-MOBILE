@@ -1,0 +1,12 @@
+{
+  "id": "example.android-tool",
+  "name": "Exemplo Android Tool",
+  "version": "1.0.0",
+  "description": "Manifesto declarativo; não executa código arbitrário.",
+  "origin": "local",
+  "risk": "LOW",
+  "permission": "TOOL_EXECUTION",
+  "capability": "DEVICE_INFO",
+  "enabled": false,
+  "toolName": "device_info"
+}
