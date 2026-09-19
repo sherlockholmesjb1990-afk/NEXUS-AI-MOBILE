@@ -12,9 +12,14 @@ concurrency:
   group: nexus-android-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    working-directory: NEXUS_V1_44_CORE_X
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,6 +59,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: NEXUS-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
-          if-no-files-
-          found: error
+          path: NEXUS_V1_44_CORE_X/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
