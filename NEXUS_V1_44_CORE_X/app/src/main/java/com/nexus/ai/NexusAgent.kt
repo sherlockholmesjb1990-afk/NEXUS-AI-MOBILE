@@ -1,6 +1,7 @@
 package com.nexus.ai
 
 import java.util.UUID
+import kotlinx.coroutines.ensureActive
 
 class NexusAgent(
     private val provider: AIProvider,
@@ -38,11 +39,11 @@ class NexusAgent(
         journal.setTaskState(taskId, state, cycleContext.cycleId)
 
         val operationalContext = contextEngine?.build(objective, taskId, backgroundExecution)
-        val effectiveInitial = if (operationalContext.isNullOrBlank()) initial else {
+        val effectiveInitial = if (operationalContext == null) initial else {
             initial.filterNot { it.role == MessageRole.SYSTEM && it.text.startsWith("Contexto operacional do NEXUS") } +
-                ChatMessage(MessageRole.SYSTEM, operationalContext)
+                ChatMessage(MessageRole.SYSTEM, operationalContext.toPrompt())
         }
-        if (!operationalContext.isNullOrBlank()) {
+        if (operationalContext != null) {
             journal.add(taskId, "CONTEXT_BUILT", "Contexto operacional montado antes da execução.", cycleContext.cycleId)
         }
 

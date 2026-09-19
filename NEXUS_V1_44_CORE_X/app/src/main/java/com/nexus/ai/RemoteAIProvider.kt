@@ -104,6 +104,8 @@ class RemoteAIProvider(
         call(payload, endpoint + "/continue")
     }
 
+    override fun streamText(messages: List<ChatMessage>): Flow<String> = streamText(messages, null)
+
     override fun streamText(messages: List<ChatMessage>, cycleId: String?): Flow<String> = flow {
         val payload = JSONObject().put("messages", JSONArray().apply {
             messages.forEach { m ->

@@ -30,8 +30,8 @@ class TaskObservationAdapter(private val journal: AgentJournal, private val cycl
         val state = when (task.state) {
             TaskState.COMPLETED -> ObservationState.COMPLETED
             TaskState.BLOCKED -> ObservationState.BLOCKED
-            TaskState.FAILED -> ObservationState.UNKNOWN
-            TaskState.CREATED, TaskState.PLANNING, TaskState.VERIFYING, TaskState.EXECUTING -> ObservationState.ACTIVE
+            TaskState.FAILED, TaskState.CANCELLED -> ObservationState.UNKNOWN
+            TaskState.PLANNING, TaskState.VERIFYING, TaskState.EXECUTING -> ObservationState.ACTIVE
         }
         return listOf(NexusObservation(
             kind = ObservationKind.TASK,
@@ -153,7 +153,7 @@ class ObservationCoordinator(
     fun snapshot(subjectId: String?, limit: Int = 20, cycleId: String? = null): ObservationSnapshot {
         val persisted = store.recent(subjectId, limit.coerceIn(1, 50), cycleId)
         val fresh = adapters.flatMap { it.observe(subjectId, cycleId) }
-        return ObservationSnapshot(ObservationReconciler.reconcile(persisted + fresh)).bounded(limit)
+        return ObservationSnapshot(ObservationReconciler.reconcile(persisted + fresh))
     }
 
     fun recordVerifiedOutcome(

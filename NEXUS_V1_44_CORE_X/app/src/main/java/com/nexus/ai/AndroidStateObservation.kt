@@ -49,7 +49,17 @@ class AndroidStateObservationAdapter(private val context: Context) : Observation
 
     private fun connectivityObservation(now: Long, expiry: Long, cycleId: String?): NexusObservation {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-            ?: return NexusObservation(ObservationKind.ANDROID_STATE, "android:network", ObservationState.UNKNOWN, "Conectividade indisponível.", 0.0, source, now, expiry, cycleId)
+            ?: return NexusObservation(
+                kind = ObservationKind.ANDROID_STATE,
+                subjectId = "android:network",
+                state = ObservationState.UNKNOWN,
+                fact = "Conectividade indisponível.",
+                confidence = 0.0,
+                source = source,
+                createdAt = now,
+                expiresAt = expiry,
+                cycleId = cycleId
+            )
         val network = cm.activeNetwork
         val caps = network?.let { cm.getNetworkCapabilities(it) }
         val connected = caps != null
@@ -61,15 +71,15 @@ class AndroidStateObservationAdapter(private val context: Context) : Observation
             else -> "NONE"
         }
         return NexusObservation(
-            ObservationKind.ANDROID_STATE,
-            "android:network",
-            if (connected) ObservationState.ACTIVE else ObservationState.PENDING,
-            "Rede ativa=$connected; transporte=$transport.",
-            1.0,
-            source,
-            now,
-            expiry,
-            cycleId
+            kind = ObservationKind.ANDROID_STATE,
+            subjectId = "android:network",
+            state = if (connected) ObservationState.ACTIVE else ObservationState.PENDING,
+            fact = "Rede ativa=$connected; transporte=$transport.",
+            confidence = 1.0,
+            source = source,
+            createdAt = now,
+            expiresAt = expiry,
+            cycleId = cycleId
         )
     }
 
@@ -77,34 +87,44 @@ class AndroidStateObservationAdapter(private val context: Context) : Observation
         val pm = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
         val interactive = pm?.isInteractive
         return NexusObservation(
-            ObservationKind.ANDROID_STATE,
-            "android:screen",
-            if (interactive == true) ObservationState.ACTIVE else if (interactive == false) ObservationState.PENDING else ObservationState.UNKNOWN,
-            "Tela interativa=$interactive.",
-            if (interactive == null) 0.0 else 1.0,
-            source,
-            now,
-            expiry,
-            cycleId
+            kind = ObservationKind.ANDROID_STATE,
+            subjectId = "android:screen",
+            state = if (interactive == true) ObservationState.ACTIVE else if (interactive == false) ObservationState.PENDING else ObservationState.UNKNOWN,
+            fact = "Tela interativa=$interactive.",
+            confidence = if (interactive == null) 0.0 else 1.0,
+            source = source,
+            createdAt = now,
+            expiresAt = expiry,
+            cycleId = cycleId
         )
     }
 
     private fun appProcessObservation(now: Long, expiry: Long, cycleId: String?): NexusObservation {
         val am = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
-            ?: return NexusObservation(ObservationKind.ANDROID_STATE, "android:app", ObservationState.UNKNOWN, "Estado do processo indisponível.", 0.0, source, now, expiry, cycleId)
+            ?: return NexusObservation(
+                kind = ObservationKind.ANDROID_STATE,
+                subjectId = "android:app",
+                state = ObservationState.UNKNOWN,
+                fact = "Estado do processo indisponível.",
+                confidence = 0.0,
+                source = source,
+                createdAt = now,
+                expiresAt = expiry,
+                cycleId = cycleId
+            )
         val importance = am.runningAppProcesses?.firstOrNull { it.processName == context.packageName }?.importance
         val foreground = importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
         val known = importance != null
         return NexusObservation(
-            ObservationKind.ANDROID_STATE,
-            "android:app",
-            if (!known) ObservationState.UNKNOWN else if (foreground) ObservationState.ACTIVE else ObservationState.PENDING,
-            "Processo do NEXUS conhecido=$known; foreground=$foreground; sdk=${Build.VERSION.SDK_INT}.",
-            if (known) 1.0 else 0.0,
-            source,
-            now,
-            expiry,
-            cycleId
+            kind = ObservationKind.ANDROID_STATE,
+            subjectId = "android:app",
+            state = if (!known) ObservationState.UNKNOWN else if (foreground) ObservationState.ACTIVE else ObservationState.PENDING,
+            fact = "Processo do NEXUS conhecido=$known; foreground=$foreground; sdk=${Build.VERSION.SDK_INT}.",
+            confidence = if (known) 1.0 else 0.0,
+            source = source,
+            createdAt = now,
+            expiresAt = expiry,
+            cycleId = cycleId
         )
     }
 }

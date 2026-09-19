@@ -25,7 +25,7 @@ class AndroidActionSelector(
         // A tool absent from the Android catalog may still be a normal NEXUS tool.
         // The caller must only treat SELECTED as an Android authorization candidate.
         val result = Selection(Status.NOT_ANDROID, requestedName, reason = "Ação não pertence ao catálogo Android oficial.")
-        audit(taskId, result)
+        audit(taskId, cycleId, result)
         return result
     }
 

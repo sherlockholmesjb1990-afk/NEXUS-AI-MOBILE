@@ -15,6 +15,8 @@ class MockAIProvider : AIProvider, StreamingProvider {
     override suspend fun continueWithToolResults(responseId: String, results: List<ToolResult>, tools: List<NexusToolDefinition>, webSearch: Boolean): AgentResponse =
         AgentResponse("Demonstração: ferramenta executada. " + results.joinToString { "${it.name}=${it.output}" })
 
+    override fun streamText(messages: List<ChatMessage>): Flow<String> = streamText(messages, null)
+
     override fun streamText(messages: List<ChatMessage>, cycleId: String?): Flow<String> = flow {
         val text = "NEXUS em streaming. Recebi: ${messages.lastOrNull { it.role == MessageRole.USER }?.text.orEmpty()}"
         text.chunked(4).forEach { delay(25); emit(it) }
